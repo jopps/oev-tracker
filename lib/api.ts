@@ -90,3 +90,13 @@ export function formatDepartureTime(departure: Departure): string {
     minute: '2-digit',
   })
 }
+
+export async function getNearbyStations(lat: number, lon: number): Promise<Station[]> {
+  const res = await fetch(
+    `${BASE_URL}/locations?x=${lon}&y=${lat}&type=station`,
+    { next: { revalidate: 0 } }
+  )
+  if (!res.ok) throw new Error('Standortsuche fehlgeschlagen')
+  const data = await res.json()
+  return data.stations?.filter((s: Station) => s.name) ?? []
+}
